@@ -5,6 +5,10 @@ import {findDOMNode} from 'react-dom';
 
 import './style.less';
 
+const STYLE_AUTO = 'auto';
+const STYLE_SHOW = 'show';
+const STYLE_HIDE = 'hide';
+
 class ScrollView extends Component {
     constructor(props) {
         super(props);
@@ -13,7 +17,8 @@ class ScrollView extends Component {
             vSize: 0,
             vPosition: 0,
             hSize: 0,
-            hPosition: 0
+            hPosition: 0,
+            hide: this.props.scrollBarStyle === STYLE_HIDE
         };
 
         this.onScroll = () => {
@@ -27,7 +32,8 @@ class ScrollView extends Component {
                 vPosition: node.scrollTop / node.scrollHeight,
                 hSize: node.offsetWidth / node.scrollWidth,
                 hPosition: node.scrollLeft / node.scrollWidth,
-                loaded: true
+                loaded: true,
+                hide: this.props.scrollBarStyle === STYLE_HIDE
             });
         };
 
@@ -40,17 +46,20 @@ class ScrollView extends Component {
                 delta = (e.pageY - start) / node.offsetHeight;
                 newPosition = Math.min(Math.max(0, startPosition + delta), max);
                 this.setState({
-                    vPosition: newPosition
-                }, function () {
+                    vPosition: newPosition,
+                    hide: this.props.scrollBarStyle === STYLE_HIDE
+                }, ()=> {
                     node.scrollTop = node.scrollHeight * newPosition
+                    this.setAutoHideTimer();
                 });
             } else {
                 delta = (e.pageX - start) / node.offsetWidth;
                 newPosition = Math.min(Math.max(0, startPosition + delta), max);
                 this.setState({
                     hPosition: newPosition
-                }, function () {
+                }, () => {
                     node.scrollLeft = node.scrollWidth * newPosition;
+                    this.setAutoHideTimer();
                 });
             }
             e.stopPropagation();
@@ -87,10 +96,31 @@ class ScrollView extends Component {
             e.stopPropagation();
             e.preventDefault();
         };
+
+        this.hideTimer = null;
+
+        this.setAutoHideTimer = () => {
+            if (this.hideTimer) {
+                clearTimeout(this.hideTimer);
+                this.hideTimer = null;
+            }
+
+            if (this.props.scrollBarStyle === STYLE_AUTO) {
+                this.hideTimer = setTimeout(()=> {
+                    this.setState({
+                        hide: true
+                    });
+                }, this.props.hideTimeout);
+            }
+        };
     }
 
     componentDidMount() {
         this.onUpdate();
+    }
+
+    componentDidUpdate() {
+        this.setAutoHideTimer();
     }
 
     render() {
@@ -115,13 +145,13 @@ class ScrollView extends Component {
 
     get horizontalScrollBarStyle() {
         return {
-            display: this.state.loaded && this.state.hSize !== 1 ? 'block' : 'none'
+            display: !this.state.hide && this.state.loaded && this.state.hSize !== 1 ? 'block' : 'none'
         }
     }
 
     get verticalScrollBarStyle() {
         return {
-            display: this.state.loaded && this.state.vSize !== 1 ? 'block' : 'none'
+            display: !this.state.hide && this.state.loaded && this.state.vSize !== 1 ? 'block' : 'none'
         };
     }
 
@@ -141,11 +171,12 @@ class ScrollView extends Component {
 }
 
 ScrollView.defaultProps = {
-    style: 'auto' // auto | show | hide
+    scrollBarStyle: 'auto', // auto | show | hide
+    hideTimeout: 1500
 };
 
 ScrollView.propTypes = {
-    style: PropTypes.string
+    scrollBarStyle: PropTypes.string
 };
 
 export default ScrollView;

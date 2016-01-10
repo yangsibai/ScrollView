@@ -56,33 +56,111 @@ dolor. Integer feugiat ut dui eget finibus. Maecenas sed rhoncus felis. Pellente
 vestibulum vel dolor vel, aliquam ullamcorper velit.`;
 
 render((
-    <div style={{width: 300, height: 300}}>
-        <ScrollView>
-            <div style={{width: 600, height: 600}}>{content}</div>
-        </ScrollView>
+    <div>
+        <div>
+            <h2>Style: auto</h2>
+            <div>
+                <h3>Should have horizontal and vertical scroll bars</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView>
+                        <div style={{width: 600, height: 600}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Only have vertical scroll bar</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView>
+                        <div style={{width: 300, height: 400, overFlow: 'hidden'}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Only have horizontal scroll bar</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView>
+                        <div style={{width: 400, height: 300}}>{shortContent}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Shouldn't have any scroll bar</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView>
+                        <div style={{width: 300, height: 300}}>{shortContent}</div>
+                    </ScrollView>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2>Style: hide</h2>
+            <div>
+                <h3>Show enable horizontal and vertical scroll</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="hide">
+                        <div style={{width: 600, height: 600}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Should only enable vertical scroll</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="hide">
+                        <div style={{width: 300, height: 400, overFlow: 'hidden'}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Should only enable horizontal scroll</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="hide">
+                        <div style={{width: 400, height: 300}}>{shortContent}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Should haven't any scroll bar</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="hide">
+                        <div style={{width: 300, height: 300}}>{shortContent}</div>
+                    </ScrollView>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2>Style: show</h2>
+            <div>
+                <h3>Show always show horizontal and vertical scroll</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="show">
+                        <div style={{width: 600, height: 600}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Should always show vertical scroll</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="show">
+                        <div style={{width: 300, height: 400, overFlow: 'hidden'}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Should always show horizontal scroll</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="show">
+                        <div style={{width: 400, height: 300}}>{shortContent}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Should haven't any scroll bar</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="show">
+                        <div style={{width: 300, height: 300}}>{shortContent}</div>
+                    </ScrollView>
+                </div>
+            </div>
+        </div>
     </div>
 ), document.getElementById('container'));
-
-render((
-    <div style={{width: 300, height: 300}}>
-        <ScrollView>
-            <div style={{width: 300, height: 300}}>{shortContent}</div>
-        </ScrollView>
-    </div>
-), document.getElementById('noBar'));
-
-render((
-    <div style={{width: 300, height: 300}}>
-        <ScrollView>
-            <div style={{width: 400, height: 300}}>{shortContent}</div>
-        </ScrollView>
-    </div>
-), document.getElementById('hor'));
-
-render((
-    <div style={{width: 300, height: 300}}>
-        <ScrollView>
-            <div style={{width: 300, height: 400, overFlow: 'hidden'}}>{content}</div>
-        </ScrollView>
-    </div>
-), document.getElementById('ver'));

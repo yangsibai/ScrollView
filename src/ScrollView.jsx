@@ -15,6 +15,7 @@ class ScrollView extends Component {
             hSize: 0,
             hPosition: 0
         };
+
         this.onScroll = () => {
             this.onUpdate();
         };

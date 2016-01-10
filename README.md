@@ -4,9 +4,11 @@ An osx style scroll view react component.
 
 Check demo at <http://blog.sibo.me/osx-scrollview/>
 
-### Usage
+### Installation
 
     npm install osx-scrollview
+
+### Usage
 
     import {render} from "react-dom";
     import ScrollView from "osx-scrollview";

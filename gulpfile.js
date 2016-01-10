@@ -61,3 +61,22 @@ gulp.task('webpack:build', function (cb) {
         cb();
     });
 });
+
+gulp.task('build-for-page', function () {
+    var myConfig = Object.create(webpackDevConfig);
+    myConfig.plugins = myConfig.plugins.concat(
+        new webpack.DefinePlugin({
+            "process.env": {
+                // This has effect on the react lib size
+                "NODE_ENV": JSON.stringify("production")
+            }
+        }),
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin()
+    );
+
+    // run webpack
+    webpack(myConfig, function (err, stats) {
+        if (err) throw new gutil.PluginError("build-for-page", err);
+    });
+});

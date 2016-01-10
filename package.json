@@ -1,9 +1,10 @@
 {
-  "name": "ScrollView",
+  "name": "osx-scrollview",
   "version": "0.0.1",
-  "description": "Lion Scroll View",
-  "main": "dist/lib.js",
+  "description": "An OSX style scroll view react component",
+  "main": "dist/bundle.js",
   "scripts": {
+    "prepublish": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "massimo",

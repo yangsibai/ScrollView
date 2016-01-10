@@ -3,6 +3,8 @@
 import {Component, PropTypes} from 'react';
 import {findDOMNode} from 'react-dom';
 
+import './style.less';
+
 class ScrollView extends Component {
     constructor(props) {
         super(props);

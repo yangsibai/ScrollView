@@ -2,8 +2,9 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var webpack = require('webpack');
+var webpackDevConfig = require('./webpack.dev.config');
 var WebpackDevServer = require('webpack-dev-server');
-var webpackConfig = require('./webpack.config');
+var webpackProConfig = require('./webpack.config');
 
 var PORT = 3000;
 
@@ -12,7 +13,7 @@ gulp.task('default', ['webpack-dev-server']);
 gulp.task('build', ['webpack:build']);
 
 gulp.task('webpack-dev-server', function (cb) {
-    var myConfig = Object.create(webpackConfig);
+    var myConfig = Object.create(webpackDevConfig);
     myConfig.entry.unshift('webpack-dev-server/client?http://localhost:' + PORT, 'webpack/hot/dev-server'); // for inline refresh webpack dev server
     //myConfig.devtool = "sourcemap";
     myConfig.devtool = "eval";
@@ -39,7 +40,7 @@ gulp.task('webpack-dev-server', function (cb) {
 
 gulp.task('webpack:build', function (cb) {
     // modify some webpack config options
-    var myConfig = Object.create(webpackConfig);
+    var myConfig = Object.create(webpackProConfig);
     myConfig.plugins = myConfig.plugins.concat(
         new webpack.DefinePlugin({
             "process.env": {

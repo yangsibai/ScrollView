@@ -1,3 +1,9 @@
-## LinkMap
+## osx-scrollview
 
-It's still in develop, DONOT use this in production.
+An osx style scroll view react component.
+
+Check demo at <http://blog.sibo.me/osx-scrollview/>
+
+## License
+
+MIT

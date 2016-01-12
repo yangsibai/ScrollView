@@ -144,7 +144,7 @@ class ScrollView extends Component {
         if (props.scrollLeft > 0) {
             node.scrollLeft = props.scrollLeft;
         }
-        if (props.scrollTop > 0 || props.scrollLeft > 0 && !props.warning) {
+        if (props.scrollTop >= 0 || props.scrollLeft >= 0 && !props.warning) {
             console.warn(`\
 WARNING: After setting scrollTop/scrollLeft, component will use these values in every updating.
 If you want to set initial scrollTop/scrollLeft, please set defaultScrollLeft/defaultScrollTop.
@@ -154,10 +154,10 @@ You can set property warning = false to hide this warning.`);
 
     componentWillReceiveProps(nextProps) {
         var node = findDOMNode(this.refs.content);
-        if (nextProps.scrollTop > 0) {
+        if (nextProps.scrollTop >= 0) {
             node.scrollTop = nextProps.scrollTop;
         }
-        if (nextProps.scrollLeft > 0) {
+        if (nextProps.scrollLeft >= 0) {
             node.scrollLeft = nextProps.scrollLeft;
         }
     }
@@ -206,7 +206,7 @@ You can set property warning = false to hide this warning.`);
         return {
             height: this.state.vSize * 100 + '%',
             top: this.state.vPosition * 100 + '%',
-            display: this.state.vSize !== 1
+            display: this.state.vSize < 1
             && (this.shouldScrollBarAlwaysShow || (!this.state.hide && this.state.loaded))
                 ? 'block' : 'none'
         };
@@ -216,7 +216,7 @@ You can set property warning = false to hide this warning.`);
         return {
             width: this.state.hSize * 100 + '%',
             left: this.state.hPosition * 100 + '%',
-            display: this.state.hSize !== 1
+            display: this.state.hSize < 1
             && ( this.shouldScrollBarAlwaysShow || (!this.state.hide && this.state.loaded))
                 ? 'block' : 'none'
         };
@@ -228,8 +228,8 @@ ScrollView.defaultProps = {
     hideTimeout: 1500,
     defaultScrollTop: 0,
     defaultScrollLeft: 0,
-    scrollTop: 0,
-    scrollLeft: 0,
+    scrollTop: -1,
+    scrollLeft: -1,
     warning: true
 };
 

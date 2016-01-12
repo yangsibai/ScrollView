@@ -165,7 +165,7 @@ var ScrollView = function (_Component) {
             if (props.scrollLeft > 0) {
                 node.scrollLeft = props.scrollLeft;
             }
-            if (props.scrollTop > 0 || props.scrollLeft > 0 && !props.warning) {
+            if (props.scrollTop >= 0 || props.scrollLeft >= 0 && !props.warning) {
                 console.warn('WARNING: After setting scrollTop/scrollLeft, component will use these values in every updating.\nIf you want to set initial scrollTop/scrollLeft, please set defaultScrollLeft/defaultScrollTop.\nYou can set property warning = false to hide this warning.');
             }
         }
@@ -173,10 +173,10 @@ var ScrollView = function (_Component) {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
             var node = (0, _reactDom.findDOMNode)(this.refs.content);
-            if (nextProps.scrollTop > 0) {
+            if (nextProps.scrollTop >= 0) {
                 node.scrollTop = nextProps.scrollTop;
             }
-            if (nextProps.scrollLeft > 0) {
+            if (nextProps.scrollLeft >= 0) {
                 node.scrollLeft = nextProps.scrollLeft;
             }
         }
@@ -230,7 +230,7 @@ var ScrollView = function (_Component) {
             return {
                 height: this.state.vSize * 100 + '%',
                 top: this.state.vPosition * 100 + '%',
-                display: this.state.vSize !== 1 && (this.shouldScrollBarAlwaysShow || !this.state.hide && this.state.loaded) ? 'block' : 'none'
+                display: this.state.vSize < 1 && (this.shouldScrollBarAlwaysShow || !this.state.hide && this.state.loaded) ? 'block' : 'none'
             };
         }
     }, {
@@ -239,7 +239,7 @@ var ScrollView = function (_Component) {
             return {
                 width: this.state.hSize * 100 + '%',
                 left: this.state.hPosition * 100 + '%',
-                display: this.state.hSize !== 1 && (this.shouldScrollBarAlwaysShow || !this.state.hide && this.state.loaded) ? 'block' : 'none'
+                display: this.state.hSize < 1 && (this.shouldScrollBarAlwaysShow || !this.state.hide && this.state.loaded) ? 'block' : 'none'
             };
         }
     }]);
@@ -252,8 +252,8 @@ ScrollView.defaultProps = {
     hideTimeout: 1500,
     defaultScrollTop: 0,
     defaultScrollLeft: 0,
-    scrollTop: 0,
-    scrollLeft: 0,
+    scrollTop: -1,
+    scrollLeft: -1,
     warning: true
 };
 

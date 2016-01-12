@@ -1,6 +1,6 @@
 {
   "name": "osx-scrollview",
-  "version": "0.0.12",
+  "version": "0.0.14",
   "description": "An OSX style scroll view react component",
   "main": "dist/ScrollView.js",
   "scripts": {

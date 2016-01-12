@@ -16,7 +16,8 @@ class ScrollView extends Component {
             vPosition: 0,
             hSize: 0,
             hPosition: 0,
-            hide: this.props.scrollBarStyle === STYLE_HIDE
+            hide: this.props.scrollBarStyle === STYLE_HIDE,
+            alwaysShow: false
         };
 
         this.onScroll = () => {
@@ -43,33 +44,25 @@ class ScrollView extends Component {
             if (direction === 'vertical') {
                 delta = (e.pageY - start) / node.offsetHeight;
                 newPosition = Math.min(Math.max(0, startPosition + delta), max);
-                this.setState({
-                    vPosition: newPosition,
-                    hide: this.props.scrollBarStyle === STYLE_HIDE
-                }, ()=> {
-                    node.scrollTop = node.scrollHeight * newPosition
-                    this.setAutoHideTimer();
-                });
+                node.scrollTop = node.scrollHeight * newPosition;
             } else {
                 delta = (e.pageX - start) / node.offsetWidth;
                 newPosition = Math.min(Math.max(0, startPosition + delta), max);
-                this.setState({
-                    hPosition: newPosition
-                }, () => {
-                    node.scrollLeft = node.scrollWidth * newPosition;
-                    this.setAutoHideTimer();
-                });
+                node.scrollLeft = node.scrollWidth * newPosition;
             }
             e.stopPropagation();
             e.preventDefault();
         };
 
-        function onMouseUp(e) {
+        var onMouseUp = (e) => {
             document.body.removeEventListener('mousemove', onMouseMove);
             document.body.removeEventListener('mouseup', onMouseUp);
+            this.setState({
+                alwaysShow: false
+            });
             e.stopPropagation();
             e.preventDefault();
-        }
+        };
 
         this.onVerticalThumbMouseDown = (e)=> {
             direction = 'vertical';
@@ -79,6 +72,9 @@ class ScrollView extends Component {
             max = (node.scrollHeight - node.offsetHeight) / node.scrollHeight;
             document.body.addEventListener('mousemove', onMouseMove);
             document.body.addEventListener('mouseup', onMouseUp);
+            this.setState({
+                alwaysShow: true
+            });
             e.stopPropagation();
             e.preventDefault();
         };
@@ -91,6 +87,9 @@ class ScrollView extends Component {
             max = (node.scrollWidth - node.offsetWidth) / node.scrollWidth;
             document.body.addEventListener('mousemove', onMouseMove);
             document.body.addEventListener('mouseup', onMouseUp);
+            this.setState({
+                alwaysShow: true
+            });
             e.stopPropagation();
             e.preventDefault();
         };
@@ -143,13 +142,17 @@ class ScrollView extends Component {
 
     get horizontalScrollBarStyle() {
         return {
-            display: !this.state.hide && this.state.loaded && this.state.hSize !== 1 ? 'block' : 'none'
+            display: this.state.hSize !== 1
+            && ( this.state.alwaysShow || (!this.state.hide && this.state.loaded))
+                ? 'block' : 'none'
         }
     }
 
     get verticalScrollBarStyle() {
         return {
-            display: !this.state.hide && this.state.loaded && this.state.vSize !== 1 ? 'block' : 'none'
+            display: this.state.vSize !== 1
+            && (this.state.alwaysShow || (!this.state.hide && this.state.loaded))
+                ? 'block' : 'none'
         };
     }
 

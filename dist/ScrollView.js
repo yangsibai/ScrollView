@@ -34,11 +34,16 @@ var ScrollView = function (_Component) {
             vPosition: 0,
             hSize: 0,
             hPosition: 0,
-            hide: _this.props.scrollBarStyle === STYLE_HIDE
+            hide: _this.props.scrollBarStyle === STYLE_HIDE,
+            alwaysShow: false
         };
 
         _this.onScroll = function () {
             _this.onUpdate();
+            if (_this.props.onScroll) {
+                var node = (0, _reactDom.findDOMNode)(_this.refs.content);
+                _this.props.onScroll(node.scrollTop, node.scrollLeft);
+            }
         };
 
         _this.onUpdate = function () {
@@ -61,33 +66,25 @@ var ScrollView = function (_Component) {
             if (direction === 'vertical') {
                 delta = (e.pageY - start) / node.offsetHeight;
                 newPosition = Math.min(Math.max(0, startPosition + delta), max);
-                _this.setState({
-                    vPosition: newPosition,
-                    hide: _this.props.scrollBarStyle === STYLE_HIDE
-                }, function () {
-                    node.scrollTop = node.scrollHeight * newPosition;
-                    _this.setAutoHideTimer();
-                });
+                node.scrollTop = node.scrollHeight * newPosition;
             } else {
                 delta = (e.pageX - start) / node.offsetWidth;
                 newPosition = Math.min(Math.max(0, startPosition + delta), max);
-                _this.setState({
-                    hPosition: newPosition
-                }, function () {
-                    node.scrollLeft = node.scrollWidth * newPosition;
-                    _this.setAutoHideTimer();
-                });
+                node.scrollLeft = node.scrollWidth * newPosition;
             }
             e.stopPropagation();
             e.preventDefault();
         };
 
-        function onMouseUp(e) {
+        var onMouseUp = function onMouseUp(e) {
             document.body.removeEventListener('mousemove', onMouseMove);
             document.body.removeEventListener('mouseup', onMouseUp);
+            _this.setState({
+                mouseDown: false
+            });
             e.stopPropagation();
             e.preventDefault();
-        }
+        };
 
         _this.onVerticalThumbMouseDown = function (e) {
             direction = 'vertical';
@@ -97,6 +94,9 @@ var ScrollView = function (_Component) {
             max = (node.scrollHeight - node.offsetHeight) / node.scrollHeight;
             document.body.addEventListener('mousemove', onMouseMove);
             document.body.addEventListener('mouseup', onMouseUp);
+            _this.setState({
+                mouseDown: true
+            });
             e.stopPropagation();
             e.preventDefault();
         };
@@ -109,6 +109,9 @@ var ScrollView = function (_Component) {
             max = (node.scrollWidth - node.offsetWidth) / node.scrollWidth;
             document.body.addEventListener('mousemove', onMouseMove);
             document.body.addEventListener('mouseup', onMouseUp);
+            _this.setState({
+                mouseDown: true
+            });
             e.stopPropagation();
             e.preventDefault();
         };
@@ -129,6 +132,18 @@ var ScrollView = function (_Component) {
                 }, _this.props.hideTimeout);
             }
         };
+
+        _this.onScrollBarMouseEnter = function (e) {
+            _this.setState({
+                mouseEntered: true
+            });
+        };
+
+        _this.onScrollBarMouseOut = function (e) {
+            _this.setState({
+                mouseEntered: false
+            });
+        };
         return _this;
     }
 
@@ -136,6 +151,34 @@ var ScrollView = function (_Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             this.onUpdate();
+            var node = (0, _reactDom.findDOMNode)(this.refs.content);
+            var props = this.props;
+            if (props.defaultScrollTop > 0) {
+                node.scrollTop = props.defaultScrollTop;
+            }
+            if (props.defaultScrollLeft > 0) {
+                node.scrollLeft = props.defaultScrollLeft;
+            }
+            if (props.scrollTop > 0) {
+                node.scrollTop = props.scrollTop;
+            }
+            if (props.scrollLeft > 0) {
+                node.scrollLeft = props.scrollLeft;
+            }
+            if (props.scrollTop > 0 || props.scrollLeft > 0 && !props.warning) {
+                console.warn('WARNING: After setting scrollTop/scrollLeft, component will use these values in every updating.\nIf you want to set initial scrollTop/scrollLeft, please set defaultScrollLeft/defaultScrollTop.\nYou can set property warning = false to hide this warning.');
+            }
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(nextProps) {
+            var node = (0, _reactDom.findDOMNode)(this.refs.content);
+            if (nextProps.scrollTop > 0) {
+                node.scrollTop = nextProps.scrollTop;
+            }
+            if (nextProps.scrollLeft > 0) {
+                node.scrollLeft = nextProps.scrollLeft;
+            }
         }
     }, {
         key: 'componentDidUpdate',
@@ -153,42 +196,41 @@ var ScrollView = function (_Component) {
                     { ref: 'content', className: 'scroll-content' },
                     this.props.children
                 ),
-                React.createElement(
+                this.shouldShowScrollBar && React.createElement(
                     'div',
                     { className: 'track scroll-bar-horizontal',
-                        style: this.horizontalScrollBarStyle,
-                        onMouseDown: this.onHorizontalThumbMouseDown },
+                        onMouseDown: this.onHorizontalThumbMouseDown,
+                        onMouseEnter: this.onScrollBarMouseEnter,
+                        onMouseLeave: this.onScrollBarMouseOut },
                     React.createElement('div', { className: 'thumb', style: this.horizontalThumbStyle })
                 ),
-                React.createElement(
+                this.shouldShowScrollBar && React.createElement(
                     'div',
                     { className: 'track scroll-bar-vertical',
-                        style: this.verticalScrollBarStyle,
-                        onMouseDown: this.onVerticalThumbMouseDown },
+                        onMouseDown: this.onVerticalThumbMouseDown,
+                        onMouseEnter: this.onScrollBarMouseEnter,
+                        onMouseLeave: this.onScrollBarMouseOut },
                     React.createElement('div', { className: 'thumb', style: this.verticalThumbStyle })
                 )
             );
         }
     }, {
-        key: 'horizontalScrollBarStyle',
+        key: 'shouldShowScrollBar',
         get: function get() {
-            return {
-                display: !this.state.hide && this.state.loaded && this.state.hSize !== 1 ? 'block' : 'none'
-            };
+            return this.props.scrollBarStyle !== STYLE_HIDE;
         }
     }, {
-        key: 'verticalScrollBarStyle',
+        key: 'shouldScrollBarAlwaysShow',
         get: function get() {
-            return {
-                display: !this.state.hide && this.state.loaded && this.state.vSize !== 1 ? 'block' : 'none'
-            };
+            return this.state.mouseEntered || this.state.mouseDown;
         }
     }, {
         key: 'verticalThumbStyle',
         get: function get() {
             return {
                 height: this.state.vSize * 100 + '%',
-                top: this.state.vPosition * 100 + '%'
+                top: this.state.vPosition * 100 + '%',
+                display: this.state.vSize !== 1 && (this.shouldScrollBarAlwaysShow || !this.state.hide && this.state.loaded) ? 'block' : 'none'
             };
         }
     }, {
@@ -196,7 +238,8 @@ var ScrollView = function (_Component) {
         get: function get() {
             return {
                 width: this.state.hSize * 100 + '%',
-                left: this.state.hPosition * 100 + '%'
+                left: this.state.hPosition * 100 + '%',
+                display: this.state.hSize !== 1 && (this.shouldScrollBarAlwaysShow || !this.state.hide && this.state.loaded) ? 'block' : 'none'
             };
         }
     }]);
@@ -206,11 +249,22 @@ var ScrollView = function (_Component) {
 
 ScrollView.defaultProps = {
     scrollBarStyle: 'auto', // auto | show | hide
-    hideTimeout: 1500
+    hideTimeout: 1500,
+    defaultScrollTop: 0,
+    defaultScrollLeft: 0,
+    scrollTop: 0,
+    scrollLeft: 0,
+    warning: true
 };
 
 ScrollView.propTypes = {
-    scrollBarStyle: _react.PropTypes.string
+    scrollBarStyle: _react.PropTypes.string,
+    defaultScrollTop: _react.PropTypes.number,
+    defaultScrollLeft: _react.PropTypes.number,
+    scrollTop: _react.PropTypes.number,
+    scrollLeft: _react.PropTypes.number,
+    warning: _react.PropTypes.bool,
+    onScroll: _react.PropTypes.func
 };
 
 exports.default = ScrollView;

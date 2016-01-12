@@ -1,3 +1,5 @@
+'use strict';
+import {Component} from 'react';
 import {render} from 'react-dom';
 import ScrollView from './ScrollView.jsx';
 
@@ -57,9 +59,39 @@ euismod
 dolor. Integer feugiat ut dui eget finibus. Maecenas sed rhoncus felis. Pellentesque quam tellus,
 vestibulum vel dolor vel, aliquam ullamcorper velit.`;
 
+class HandleScrollComp extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            left: 0,
+            top: 0
+        };
+
+        this.onScroll = (top, left)=> {
+            this.setState({
+                top: top,
+                left: left
+            });
+        };
+    }
+
+    render() {
+        return (
+            <div>
+                <h3>Handle scroll left:{this.state.left} top: {this.state.top}</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView onScroll={this.onScroll}>
+                        <div style={{width: 600, height: 600}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+        )
+    }
+}
+
 render((
     <div>
-        <div>
+        <section>
             <h2>Style: auto</h2>
             <div>
                 <h3>Should have horizontal and vertical scroll bars</h3>
@@ -85,51 +117,8 @@ render((
                     </ScrollView>
                 </div>
             </div>
-            <div>
-                <h3>Shouldn't have any scroll bar</h3>
-                <div style={{width: 300, height: 300}}>
-                    <ScrollView>
-                        <div style={{width: 300, height: 300}}>{shortContent}</div>
-                    </ScrollView>
-                </div>
-            </div>
-        </div>
-        <div>
-            <h2>Style: hide</h2>
-            <div>
-                <h3>Show enable horizontal and vertical scroll</h3>
-                <div style={{width: 300, height: 300}}>
-                    <ScrollView scrollBarStyle="hide">
-                        <div style={{width: 600, height: 600}}>{content}</div>
-                    </ScrollView>
-                </div>
-            </div>
-            <div>
-                <h3>Should only enable vertical scroll</h3>
-                <div style={{width: 300, height: 300}}>
-                    <ScrollView scrollBarStyle="hide">
-                        <div style={{width: 300, height: 400, overFlow: 'hidden'}}>{content}</div>
-                    </ScrollView>
-                </div>
-            </div>
-            <div>
-                <h3>Should only enable horizontal scroll</h3>
-                <div style={{width: 300, height: 300}}>
-                    <ScrollView scrollBarStyle="hide">
-                        <div style={{width: 400, height: 300}}>{shortContent}</div>
-                    </ScrollView>
-                </div>
-            </div>
-            <div>
-                <h3>Should haven't any scroll bar</h3>
-                <div style={{width: 300, height: 300}}>
-                    <ScrollView scrollBarStyle="hide">
-                        <div style={{width: 300, height: 300}}>{shortContent}</div>
-                    </ScrollView>
-                </div>
-            </div>
-        </div>
-        <div>
+        </section>
+        <section>
             <h2>Style: show</h2>
             <div>
                 <h3>Show always show horizontal and vertical scroll</h3>
@@ -155,14 +144,75 @@ render((
                     </ScrollView>
                 </div>
             </div>
+        </section>
+        <section>
+            <h2>Style: hide</h2>
             <div>
-                <h3>Should haven't any scroll bar</h3>
+                <h3>Show enable horizontal and vertical scroll</h3>
                 <div style={{width: 300, height: 300}}>
-                    <ScrollView scrollBarStyle="show">
+                    <ScrollView scrollBarStyle="hide">
+                        <div style={{width: 600, height: 600}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Should only enable vertical scroll</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="hide">
+                        <div style={{width: 300, height: 400, overFlow: 'hidden'}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Should only enable horizontal scroll</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView scrollBarStyle="hide">
+                        <div style={{width: 400, height: 300}}>{shortContent}</div>
+                    </ScrollView>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h2>Set initial scroll position</h2>
+            <div>
+                <h3>Set initial horizontal and vertical scroll bar</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView defaultScrollTop={100} defaultScrollLeft={100}>
+                        <div style={{width: 600, height: 600}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Set initial vertical scroll bar</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView defaultScrollTop={100}>
+                        <div style={{width: 600, height: 600}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+            <div>
+                <h3>Set initial horizontal scroll bar</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView defaultScrollLeft={100}>
+                        <div style={{width: 600, height: 600}}>{content}</div>
+                    </ScrollView>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h2>Handle scroll event</h2>
+            <HandleScrollComp/>
+        </section>
+        <section>
+            <h2>Auto hide scroll bar</h2>
+            <div>
+                <h3>Shouldn't have any scroll bar</h3>
+                <div style={{width: 300, height: 300}}>
+                    <ScrollView>
                         <div style={{width: 300, height: 300}}>{shortContent}</div>
                     </ScrollView>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 ), document.getElementById('container'));

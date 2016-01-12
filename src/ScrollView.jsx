@@ -22,6 +22,10 @@ class ScrollView extends Component {
 
         this.onScroll = () => {
             this.onUpdate();
+            if (this.props.onScroll) {
+                var node = findDOMNode(this.refs.content);
+                this.props.onScroll(node.scrollTop, node.scrollLeft);
+            }
         };
 
         this.onUpdate = ()=> {
@@ -58,7 +62,7 @@ class ScrollView extends Component {
             document.body.removeEventListener('mousemove', onMouseMove);
             document.body.removeEventListener('mouseup', onMouseUp);
             this.setState({
-                alwaysShow: false
+                mouseDown: false
             });
             e.stopPropagation();
             e.preventDefault();
@@ -73,7 +77,7 @@ class ScrollView extends Component {
             document.body.addEventListener('mousemove', onMouseMove);
             document.body.addEventListener('mouseup', onMouseUp);
             this.setState({
-                alwaysShow: true
+                mouseDown: true
             });
             e.stopPropagation();
             e.preventDefault();
@@ -88,7 +92,7 @@ class ScrollView extends Component {
             document.body.addEventListener('mousemove', onMouseMove);
             document.body.addEventListener('mouseup', onMouseUp);
             this.setState({
-                alwaysShow: true
+                mouseDown: true
             });
             e.stopPropagation();
             e.preventDefault();
@@ -110,10 +114,52 @@ class ScrollView extends Component {
                 }, this.props.hideTimeout);
             }
         };
+
+        this.onScrollBarMouseEnter = (e) => {
+            this.setState({
+                mouseEntered: true
+            });
+        };
+
+        this.onScrollBarMouseOut = (e) => {
+            this.setState({
+                mouseEntered: false
+            });
+        };
     }
 
     componentDidMount() {
         this.onUpdate();
+        var node = findDOMNode(this.refs.content);
+        var props = this.props;
+        if (props.defaultScrollTop > 0) {
+            node.scrollTop = props.defaultScrollTop;
+        }
+        if (props.defaultScrollLeft > 0) {
+            node.scrollLeft = props.defaultScrollLeft;
+        }
+        if (props.scrollTop > 0) {
+            node.scrollTop = props.scrollTop;
+        }
+        if (props.scrollLeft > 0) {
+            node.scrollLeft = props.scrollLeft;
+        }
+        if (props.scrollTop > 0 || props.scrollLeft > 0 && !props.warning) {
+            console.warn(`\
+WARNING: After setting scrollTop/scrollLeft, component will use these values in every updating.
+If you want to set initial scrollTop/scrollLeft, please set defaultScrollLeft/defaultScrollTop.
+You can set property warning = false to hide this warning.`);
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        var node = findDOMNode(this.refs.content);
+        if (nextProps.scrollTop > 0) {
+            node.scrollTop = nextProps.scrollTop;
+        }
+        if (nextProps.scrollLeft > 0) {
+            node.scrollLeft = nextProps.scrollLeft;
+        }
     }
 
     componentDidUpdate() {
@@ -126,58 +172,75 @@ class ScrollView extends Component {
                 <div ref="content" className="scroll-content">
                     {this.props.children}
                 </div>
-                <div className="track scroll-bar-horizontal"
-                     style={this.horizontalScrollBarStyle}
-                     onMouseDown={this.onHorizontalThumbMouseDown}>
-                    <div className="thumb" style={this.horizontalThumbStyle}></div>
-                </div>
-                <div className="track scroll-bar-vertical"
-                     style={this.verticalScrollBarStyle}
-                     onMouseDown={this.onVerticalThumbMouseDown}>
-                    <div className="thumb" style={this.verticalThumbStyle}></div>
-                </div>
+                {
+                    this.shouldShowScrollBar &&
+                    <div className="track scroll-bar-horizontal"
+                         onMouseDown={this.onHorizontalThumbMouseDown}
+                         onMouseEnter={this.onScrollBarMouseEnter}
+                         onMouseLeave={this.onScrollBarMouseOut}>
+                        <div className="thumb" style={this.horizontalThumbStyle}></div>
+                    </div>
+                }
+                {
+                    this.shouldShowScrollBar &&
+                    <div className="track scroll-bar-vertical"
+                         onMouseDown={this.onVerticalThumbMouseDown}
+                         onMouseEnter={this.onScrollBarMouseEnter}
+                         onMouseLeave={this.onScrollBarMouseOut}>
+                        <div className="thumb" style={this.verticalThumbStyle}></div>
+                    </div>
+                }
             </div>
         );
     }
 
-    get horizontalScrollBarStyle() {
-        return {
-            display: this.state.hSize !== 1
-            && ( this.state.alwaysShow || (!this.state.hide && this.state.loaded))
-                ? 'block' : 'none'
-        }
+    get shouldShowScrollBar() {
+        return this.props.scrollBarStyle !== STYLE_HIDE;
     }
 
-    get verticalScrollBarStyle() {
-        return {
-            display: this.state.vSize !== 1
-            && (this.state.alwaysShow || (!this.state.hide && this.state.loaded))
-                ? 'block' : 'none'
-        };
+    get shouldScrollBarAlwaysShow() {
+        return this.state.mouseEntered || this.state.mouseDown;
     }
 
     get verticalThumbStyle() {
         return {
             height: this.state.vSize * 100 + '%',
-            top: this.state.vPosition * 100 + '%'
+            top: this.state.vPosition * 100 + '%',
+            display: this.state.vSize !== 1
+            && (this.shouldScrollBarAlwaysShow || (!this.state.hide && this.state.loaded))
+                ? 'block' : 'none'
         };
     }
 
     get horizontalThumbStyle() {
         return {
             width: this.state.hSize * 100 + '%',
-            left: this.state.hPosition * 100 + '%'
+            left: this.state.hPosition * 100 + '%',
+            display: this.state.hSize !== 1
+            && ( this.shouldScrollBarAlwaysShow || (!this.state.hide && this.state.loaded))
+                ? 'block' : 'none'
         };
     }
 }
 
 ScrollView.defaultProps = {
     scrollBarStyle: 'auto', // auto | show | hide
-    hideTimeout: 1500
+    hideTimeout: 1500,
+    defaultScrollTop: 0,
+    defaultScrollLeft: 0,
+    scrollTop: 0,
+    scrollLeft: 0,
+    warning: true
 };
 
 ScrollView.propTypes = {
-    scrollBarStyle: PropTypes.string
+    scrollBarStyle: PropTypes.string,
+    defaultScrollTop: PropTypes.number,
+    defaultScrollLeft: PropTypes.number,
+    scrollTop: PropTypes.number,
+    scrollLeft: PropTypes.number,
+    warning: PropTypes.bool,
+    onScroll: PropTypes.func
 };
 
 export default ScrollView;

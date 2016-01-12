@@ -4,18 +4,36 @@ var gutil = require('gulp-util');
 var webpack = require('webpack');
 var webpackDevConfig = require('./webpack.dev.config');
 var WebpackDevServer = require('webpack-dev-server');
-var webpackProConfig = require('./webpack.config');
+var babel = require('gulp-babel');
+var less = require('gulp-less');
+var postcss = require('gulp-postcss');
+var sourcemaps = require('gulp-sourcemaps');
+var autoprefixer = require('autoprefixer');
 
 var PORT = 3000;
 
 gulp.task('default', ['webpack-dev-server']);
 
-gulp.task('build', ['webpack:build']);
+gulp.task('build', ['compile_js', 'compile_css']);
+
+gulp.task('compile_js', function () {
+    return gulp.src('src/ScrollView.jsx')
+        .pipe(babel({}))
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('compile_css', function () {
+    return gulp.src('src/style.less')
+        .pipe(less())
+        .pipe(sourcemaps.init())
+        .pipe(postcss([autoprefixer({browsers: ['last 2 versions']})]))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest('dist/'));
+});
 
 gulp.task('webpack-dev-server', function (cb) {
     var myConfig = Object.create(webpackDevConfig);
     myConfig.entry.unshift('webpack-dev-server/client?http://localhost:' + PORT, 'webpack/hot/dev-server'); // for inline refresh webpack dev server
-    //myConfig.devtool = "sourcemap";
     myConfig.devtool = "eval";
     myConfig.debug = true;
 
@@ -34,30 +52,6 @@ gulp.task('webpack-dev-server', function (cb) {
         // Server listening
         gutil.log("[webpack-dev-server]", "http://localhost:" + PORT + "/webpack-dev-server/index.html");
         // keep the server alive or continue?
-        cb();
-    });
-});
-
-gulp.task('webpack:build', function (cb) {
-    // modify some webpack config options
-    var myConfig = Object.create(webpackProConfig);
-    myConfig.plugins = myConfig.plugins.concat(
-        new webpack.DefinePlugin({
-            "process.env": {
-                // This has effect on the react lib size
-                "NODE_ENV": JSON.stringify("production")
-            }
-        }),
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.UglifyJsPlugin()
-    );
-
-    // run webpack
-    webpack(myConfig, function (err, stats) {
-        if (err) throw new gutil.PluginError("webpack:build", err);
-        gutil.log("[webpack:build]", stats.toString({
-            colors: true
-        }));
         cb();
     });
 });

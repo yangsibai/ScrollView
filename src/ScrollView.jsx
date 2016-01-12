@@ -3,8 +3,6 @@
 import {Component, PropTypes} from 'react';
 import {findDOMNode} from 'react-dom';
 
-import './style.less';
-
 const STYLE_AUTO = 'auto';
 const STYLE_SHOW = 'show';
 const STYLE_HIDE = 'hide';

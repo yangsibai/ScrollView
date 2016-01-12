@@ -1,6 +1,8 @@
 import {render} from 'react-dom';
 import ScrollView from './ScrollView.jsx';
 
+import './style.less';
+
 var shortContent = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus magna molestie iaculis cursus.
 Donec eget sollicitudin augue. Nullam scelerisque mi ex, quis rutrum nibh ornare vitae. Curabitur

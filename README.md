@@ -10,6 +10,8 @@ Check demo at <http://blog.sibo.me/osx-scrollview/>
 
 ### Usage
 
+Append `dist/style.css` to your css file.
+
     import {render} from "react-dom";
     import ScrollView from "osx-scrollview";
 

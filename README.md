@@ -1,8 +1,12 @@
 ## osx-scrollview
 
+[![NPM](https://nodei.co/npm/osx-scrollview.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/osx-scrollview/)
+
 An osx style scroll view react component.
 
 Check demo at <http://blog.sibo.me/osx-scrollview/>
+
+**Important Notes: if you already have an osx-style scrollbar(osx, ios), it will use scrollbar of the system. All features has not been implemented.**
 
 ### Installation
 

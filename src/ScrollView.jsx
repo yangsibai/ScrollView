@@ -168,6 +168,10 @@ You can set property warning = false to hide this warning.`);
     this.setAutoHideTimer();
   }
 
+  componentWillUnmount() {
+    clearTimeout(this.hideTimer);
+  }
+
   render() {
     if (IS_LION_SCROLLBAR) {
       return (

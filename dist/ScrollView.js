@@ -188,6 +188,11 @@ var ScrollView = function (_Component) {
       this.setAutoHideTimer();
     }
   }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      clearTimeout(this.hideTimer);
+    }
+  }, {
     key: 'render',
     value: function render() {
       if (IS_LION_SCROLLBAR) {

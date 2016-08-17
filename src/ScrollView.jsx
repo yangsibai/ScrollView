@@ -186,7 +186,13 @@ You can set property warning = false to hide this warning.`);
           overflow: 'auto',
           width: '100%',
           height: '100%'
-        }}>{this.props.children}</div>
+        }}>
+          <div style={{
+            position: 'relative'
+          }}>
+            {this.props.children}
+          </div>
+        </div>
       );
     }
     return (

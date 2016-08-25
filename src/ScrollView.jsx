@@ -11,7 +11,7 @@ const STYLE_AUTO = 'auto';
 const STYLE_SHOW = 'show';
 const STYLE_HIDE = 'hide';
 
-const IS_LION_SCROLLBAR = (/iPhone|iPad|iPod|OS X/i).test(window.navigator.userAgent);
+const IS_LION_SCROLLBAR = (/Android|webOS|iPhone|iPad|iPod|OS X|BlackBerry|IEMobile|Opera Mini/i).test(window.navigator.userAgent);
 
 
 module.exports = React.createClass({

@@ -13,7 +13,6 @@ const STYLE_HIDE = 'hide';
 
 const IS_LION_SCROLLBAR = (/Android|webOS|iPhone|iPad|iPod|OS X|BlackBerry|IEMobile|Opera Mini/i).test(window.navigator.userAgent);
 
-
 module.exports = React.createClass({
   propTypes: {
     scrollBarStyle: PropTypes.string,
@@ -76,8 +75,8 @@ module.exports = React.createClass({
     e.preventDefault();
   },
   onMouseUp: function (e) {
-    document.body.removeEventListener('mousemove', onMouseMove);
-    document.body.removeEventListener('mouseup', onMouseUp);
+    document.body.removeEventListener('mousemove', this.onMouseMove);
+    document.body.removeEventListener('mouseup', this.onMouseUp);
     this.setState({
       mouseDown: false
     });
@@ -90,22 +89,22 @@ module.exports = React.createClass({
     this.start = e.pageY;
     this.startPosition = this.state.vPosition;
     this.max = (node.scrollHeight - node.offsetHeight) / node.scrollHeight;
-    document.body.addEventListener('mousemove', onMouseMove);
-    document.body.addEventListener('mouseup', onMouseUp);
+    document.body.addEventListener('mousemove', this.onMouseMove);
+    document.body.addEventListener('mouseup', this.onMouseUp);
     this.setState({
       mouseDown: true
     });
     e.stopPropagation();
     e.preventDefault();
   },
-  onHorizontalThumbMouseDown: function () {
+  onHorizontalThumbMouseDown: function (e) {
     this.direction = 'horizontal';
     var node = findDOMNode(this.refs.content);
     this.start = e.pageX;
     this.startPosition = this.state.hPosition;
     this.max = (node.scrollWidth - node.offsetWidth) / node.scrollWidth;
-    document.body.addEventListener('mousemove', onMouseMove);
-    document.body.addEventListener('mouseup', onMouseUp);
+    document.body.addEventListener('mousemove', this.onMouseMove);
+    document.body.addEventListener('mouseup', this.onMouseUp);
     this.setState({
       mouseDown: true
     });
@@ -221,6 +220,7 @@ You can set property warning = false to hide this warning.`);
       </div>
     );
   },
+
   shouldShowScrollBar: function () {
     return this.state.scrollBarStyle !== STYLE_HIDE;
   },

@@ -21,7 +21,9 @@ module.exports = React.createClass({
     scrollTop: PropTypes.number,
     scrollLeft: PropTypes.number,
     warning: PropTypes.bool,
-    onScroll: PropTypes.func
+    onScroll: PropTypes.func,
+    disableHScroll: PropTypes.bool,
+    disableVScroll: PropTypes.bool
   },
   getInitialState: function () {
     return {
@@ -179,13 +181,15 @@ You can set property warning = false to hide this warning.`);
     clearTimeout(this.hideTimer);
   },
   render: function () {
+    var contentStyle = {
+      overflowX: this.props.disableHScroll ? 'hidden': 'auto',
+      overflowY: this.props.disableVScroll ? 'hidden': 'auto'
+    };
     if (IS_LION_SCROLLBAR) {
+      contentStyle.width = '100%';
+      contentStyle.height = '100%';
       return (
-        <div ref="content" style={{
-          overflow: 'auto',
-          width: '100%',
-          height: '100%'
-        }}>
+        <div ref="content" style={contentStyle}>
           <div style={{
             position: 'relative'
           }}>
@@ -196,10 +200,11 @@ You can set property warning = false to hide this warning.`);
     }
     return (
       <div className="scroll-view" onScroll={this.onScroll}>
-        <div ref="content" className="scroll-content">
+        <div ref="content" className="scroll-content" style={contentStyle}>
           {this.props.children}
         </div>
         {
+          !this.props.disableHScroll &&
           this.shouldShowScrollBar &&
           <div className="track scroll-bar-horizontal"
                onMouseDown={this.onHorizontalThumbMouseDown}
@@ -209,6 +214,7 @@ You can set property warning = false to hide this warning.`);
           </div>
         }
         {
+          !this.props.disableVScroll &&
           this.shouldShowScrollBar &&
           <div className="track scroll-bar-vertical"
                onMouseDown={this.onVerticalThumbMouseDown}

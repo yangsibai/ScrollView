@@ -76,47 +76,37 @@ module.exports = React.createClass({
     e.stopPropagation();
     e.preventDefault();
   },
-  onMouseUp: function (_onMouseUp) {
-    function onMouseUp(_x) {
-      return _onMouseUp.apply(this, arguments);
-    }
-
-    onMouseUp.toString = function () {
-      return _onMouseUp.toString();
-    };
-
-    return onMouseUp;
-  }(function (e) {
-    document.body.removeEventListener('mousemove', onMouseMove);
-    document.body.removeEventListener('mouseup', onMouseUp);
+  onMouseUp: function onMouseUp(e) {
+    document.body.removeEventListener('mousemove', this.onMouseMove);
+    document.body.removeEventListener('mouseup', this.onMouseUp);
     this.setState({
       mouseDown: false
     });
     e.stopPropagation();
     e.preventDefault();
-  }),
+  },
   onVerticalThumbMouseDown: function onVerticalThumbMouseDown(e) {
     this.direction = 'vertical';
     var node = findDOMNode(this.refs.content);
     this.start = e.pageY;
     this.startPosition = this.state.vPosition;
     this.max = (node.scrollHeight - node.offsetHeight) / node.scrollHeight;
-    document.body.addEventListener('mousemove', onMouseMove);
-    document.body.addEventListener('mouseup', onMouseUp);
+    document.body.addEventListener('mousemove', this.onMouseMove);
+    document.body.addEventListener('mouseup', this.onMouseUp);
     this.setState({
       mouseDown: true
     });
     e.stopPropagation();
     e.preventDefault();
   },
-  onHorizontalThumbMouseDown: function onHorizontalThumbMouseDown() {
+  onHorizontalThumbMouseDown: function onHorizontalThumbMouseDown(e) {
     this.direction = 'horizontal';
     var node = findDOMNode(this.refs.content);
     this.start = e.pageX;
     this.startPosition = this.state.hPosition;
     this.max = (node.scrollWidth - node.offsetWidth) / node.scrollWidth;
-    document.body.addEventListener('mousemove', onMouseMove);
-    document.body.addEventListener('mouseup', onMouseUp);
+    document.body.addEventListener('mousemove', this.onMouseMove);
+    document.body.addEventListener('mouseup', this.onMouseUp);
     this.setState({
       mouseDown: true
     });
@@ -233,6 +223,7 @@ module.exports = React.createClass({
       )
     );
   },
+
   shouldShowScrollBar: function shouldShowScrollBar() {
     return this.state.scrollBarStyle !== STYLE_HIDE;
   },

@@ -23,7 +23,9 @@ module.exports = React.createClass({
     scrollTop: PropTypes.number,
     scrollLeft: PropTypes.number,
     warning: PropTypes.bool,
-    onScroll: PropTypes.func
+    onScroll: PropTypes.func,
+    disableHScroll: PropTypes.bool,
+    disableVScroll: PropTypes.bool
   },
   getInitialState: function getInitialState() {
     return {
@@ -180,14 +182,16 @@ module.exports = React.createClass({
     clearTimeout(this.hideTimer);
   },
   render: function render() {
+    var contentStyle = {
+      overflowX: this.props.disableHScroll ? 'hidden' : 'auto',
+      overflowY: this.props.disableVScroll ? 'hidden' : 'auto'
+    };
     if (IS_LION_SCROLLBAR) {
+      contentStyle.width = '100%';
+      contentStyle.height = '100%';
       return React.createElement(
         'div',
-        { ref: 'content', style: {
-            overflow: 'auto',
-            width: '100%',
-            height: '100%'
-          } },
+        { ref: 'content', style: contentStyle },
         React.createElement(
           'div',
           { style: {
@@ -202,10 +206,10 @@ module.exports = React.createClass({
       { className: 'scroll-view', onScroll: this.onScroll },
       React.createElement(
         'div',
-        { ref: 'content', className: 'scroll-content' },
+        { ref: 'content', className: 'scroll-content', style: contentStyle },
         this.props.children
       ),
-      this.shouldShowScrollBar && React.createElement(
+      !this.props.disableHScroll && this.shouldShowScrollBar && React.createElement(
         'div',
         { className: 'track scroll-bar-horizontal',
           onMouseDown: this.onHorizontalThumbMouseDown,
@@ -213,7 +217,7 @@ module.exports = React.createClass({
           onMouseLeave: this.onScrollBarMouseOut },
         React.createElement('div', { className: 'thumb', style: this.horizontalThumbStyle() })
       ),
-      this.shouldShowScrollBar && React.createElement(
+      !this.props.disableVScroll && this.shouldShowScrollBar && React.createElement(
         'div',
         { className: 'track scroll-bar-vertical',
           onMouseDown: this.onVerticalThumbMouseDown,

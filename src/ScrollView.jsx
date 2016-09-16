@@ -11,7 +11,7 @@ const STYLE_AUTO = 'auto';
 const STYLE_SHOW = 'show';
 const STYLE_HIDE = 'hide';
 
-const IS_LION_SCROLLBAR = (/Android|webOS|iPhone|iPad|iPod|OS X|BlackBerry|IEMobile|Opera Mini/i).test(window.navigator.userAgent);
+const IS_LION_SCROLLBAR = (/Android|webOS|iPhone|iPad|iPod|OS X|BlackBerry|IEMobile|Opera Mini/i).test(window.navigator.userAgent) && !(/Chrome/i).test(window.navigator.userAgent);
 
 module.exports = React.createClass({
   propTypes: {
@@ -182,8 +182,8 @@ You can set property warning = false to hide this warning.`);
   },
   render: function () {
     var contentStyle = {
-      overflowX: this.props.disableHScroll ? 'hidden': 'auto',
-      overflowY: this.props.disableVScroll ? 'hidden': 'auto'
+      overflowX: this.props.disableHScroll ? 'hidden' : 'auto',
+      overflowY: this.props.disableVScroll ? 'hidden' : 'auto'
     };
     if (IS_LION_SCROLLBAR) {
       contentStyle.width = '100%';

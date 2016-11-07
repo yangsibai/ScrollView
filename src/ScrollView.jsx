@@ -205,7 +205,7 @@ You can set property warning = false to hide this warning.`);
         </div>
         {
           !this.props.disableHScroll &&
-          this.shouldShowScrollBar &&
+          this.shouldShowScrollBar() &&
           <div className="track scroll-bar-horizontal"
                onMouseDown={this.onHorizontalThumbMouseDown}
                onMouseEnter={this.onScrollBarMouseEnter}
@@ -215,7 +215,7 @@ You can set property warning = false to hide this warning.`);
         }
         {
           !this.props.disableVScroll &&
-          this.shouldShowScrollBar &&
+          this.shouldShowScrollBar() &&
           <div className="track scroll-bar-vertical"
                onMouseDown={this.onVerticalThumbMouseDown}
                onMouseEnter={this.onScrollBarMouseEnter}

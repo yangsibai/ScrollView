@@ -166,6 +166,9 @@ module.exports = React.createClass({
 
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
     var node = findDOMNode(this.refs.content);
+    if (!node) {
+      return;
+    }
     if (nextProps.scrollTop >= 0) {
       node.scrollTop = nextProps.scrollTop;
     }
@@ -209,7 +212,7 @@ module.exports = React.createClass({
         { ref: 'content', className: 'scroll-content', style: contentStyle },
         this.props.children
       ),
-      !this.props.disableHScroll && this.shouldShowScrollBar && React.createElement(
+      !this.props.disableHScroll && this.shouldShowScrollBar() && React.createElement(
         'div',
         { className: 'track scroll-bar-horizontal',
           onMouseDown: this.onHorizontalThumbMouseDown,
@@ -217,7 +220,7 @@ module.exports = React.createClass({
           onMouseLeave: this.onScrollBarMouseOut },
         React.createElement('div', { className: 'thumb', style: this.horizontalThumbStyle() })
       ),
-      !this.props.disableVScroll && this.shouldShowScrollBar && React.createElement(
+      !this.props.disableVScroll && this.shouldShowScrollBar() && React.createElement(
         'div',
         { className: 'track scroll-bar-vertical',
           onMouseDown: this.onVerticalThumbMouseDown,

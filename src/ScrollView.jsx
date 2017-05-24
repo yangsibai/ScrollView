@@ -165,6 +165,9 @@ You can set property warning = false to hide this warning.`);
 
   componentWillReceiveProps: function (nextProps) {
     var node = findDOMNode(this.refs.content);
+    if (!node) {
+      return;
+    }
     if (nextProps.scrollTop >= 0) {
       node.scrollTop = nextProps.scrollTop;
     }
